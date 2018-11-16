@@ -6,6 +6,47 @@
 #include <omp.h>
 #include "windows.h"
 
+static std::vector<std::vector<int>> LoadMatrix(const std::string &filename)
+{
+	std::ifstream file;
+	file.open(filename, std::ios::in | std::ios::out);
+
+	if (!file.is_open())
+	{
+		return std::vector<std::vector<int>>();
+	}
+
+	std::vector<std::vector<int>> data;
+	std::string line;
+
+	while (!std::getline(file, line, '\n').eof())
+	{
+		std::vector<int> lineData;
+		int value;
+		std::string textedValue;
+		for (int i = 0; i<line.length(); i++)
+		{
+			if (line[i] != ',')
+			{
+				textedValue += line[i];
+			}
+			else
+			{
+				value = std::stoi(textedValue);
+				lineData.push_back(value);
+				textedValue.clear();
+			}
+		}
+
+		value = std::stoi(textedValue);
+		lineData.push_back(value);
+		textedValue.clear();
+		data.push_back(lineData);
+	}
+
+	return data;
+}
+
 static int CalcDeterminantNormal(std::vector<std::vector<int>> Matrix)
 {
 	//this function is written in c++ to calculate the determinant of matrix
