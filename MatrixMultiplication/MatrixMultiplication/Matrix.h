@@ -6,42 +6,86 @@
 #include <omp.h>
 #include "windows.h"
 
-static std::vector<std::vector<int>> LoadMatrix(const std::string &filename)
+static std::vector<std::vector<int>> LoadMatrix()
 {
-	std::ifstream file;
-	file.open(filename, std::ios::in | std::ios::out);
-
-	if (!file.is_open())
-	{
-		return std::vector<std::vector<int>>();
-	}
-
 	std::vector<std::vector<int>> data;
-	std::string line;
 
-	while (!std::getline(file, line, '\n').eof())
+	OPENFILENAME ofn;
+	TCHAR szFile[260] = { 0 };
+
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = GetConsoleWindow();
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = L"Matrix file (.txt)\0*.txt\0All\0*.*\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (GetOpenFileName(&ofn) == TRUE)
 	{
-		std::vector<int> lineData;
-		int value;
-		std::string textedValue;
-		for (int i = 0; i<line.length(); i++)
+		std::ifstream file(ofn.lpstrFile, std::ios::in | std::ios::out);
+
+		if (!file.is_open())
 		{
-			if (line[i] != ',')
+			return std::vector<std::vector<int>>();
+		}
+
+		std::string line;
+		bool firstLine = false;
+		int len = -1;
+
+		std::getline(file, line, '\n');
+
+		do
+		{
+			std::vector<int> lineData;
+			int value;
+			std::string textedValue;
+			for (int i = 0; i < line.length(); i++)
 			{
-				textedValue += line[i];
+				if (line[i] != ',')
+				{
+					textedValue += line[i];
+				}
+				else
+				{
+					value = std::stoi(textedValue);
+					lineData.push_back(value);
+					textedValue.clear();
+				}
+			}
+
+			value = std::stoi(textedValue);
+			lineData.push_back(value);
+			textedValue.clear();
+
+			if (!firstLine)
+			{
+				len = lineData.size();
+				firstLine = !firstLine;
 			}
 			else
 			{
-				value = std::stoi(textedValue);
-				lineData.push_back(value);
-				textedValue.clear();
+				if (lineData.size() != len)
+				{
+					std::cout << "Incorrect matrix, should be balanced" << std::endl;
+					return std::vector<std::vector<int>>();
+				}
 			}
-		}
 
-		value = std::stoi(textedValue);
-		lineData.push_back(value);
-		textedValue.clear();
-		data.push_back(lineData);
+			data.push_back(lineData);
+
+		} while (!std::getline(file, line, '\n').eof());
+
+		if (data.size() != len)
+		{
+			std::cout << "Incorrect matrix, should be squared" << std::endl;
+			return std::vector<std::vector<int>>();
+		}
 	}
 
 	return data;
@@ -124,9 +168,9 @@ static int CalcDeterminantOpenMP(std::vector<std::vector<int>> Matrix)
 
 		auto chunk = Matrix.size();
 
-		#pragma omp parallel shared(chunk)
+#pragma omp parallel shared(chunk)
 		{
-			#pragma omp for schedule(dynamic,chunk) nowait
+#pragma omp for schedule(dynamic,chunk) nowait
 			for (int p = 0; p < Matrix[0].size(); p++)
 			{
 				//this loop iterate on each elements of the first row in the matrix.
