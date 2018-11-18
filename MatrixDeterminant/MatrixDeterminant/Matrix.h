@@ -213,6 +213,3 @@ static double CalcDeterminantOpenMP(std::vector<std::vector<double>> Matrix)
 		return det;
 	}
 }
-
-
-
