@@ -29,10 +29,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MatrixMultiplication.cpp">
+    <ClCompile Include="Matrix.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.h">
+    <ClCompile Include="MatrixDeterminant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

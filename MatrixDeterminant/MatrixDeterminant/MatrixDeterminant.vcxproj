@@ -14,8 +14,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{84EA01BB-165B-4EA5-A571-443A224F69A4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MatrixMultiplication</RootNamespace>
+    <RootNamespace>MatrixDeterminant</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>MatrixDeterminant</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -87,7 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Matrix.h" />
-    <ClCompile Include="MatrixMultiplication.cpp" />
+    <ClCompile Include="MatrixDeterminant.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
