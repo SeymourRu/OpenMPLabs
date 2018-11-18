@@ -6,9 +6,9 @@
 #include <omp.h>
 #include "windows.h"
 
-static std::vector<std::vector<int>> LoadMatrix()
+static std::vector<std::vector<double>> LoadMatrix()
 {
-	std::vector<std::vector<int>> data;
+	std::vector<std::vector<double>> data;
 
 	OPENFILENAME ofn;
 	TCHAR szFile[260] = { 0 };
@@ -31,7 +31,7 @@ static std::vector<std::vector<int>> LoadMatrix()
 
 		if (!file.is_open())
 		{
-			return std::vector<std::vector<int>>();
+			return std::vector<std::vector<double>>();
 		}
 
 		std::string line;
@@ -42,7 +42,7 @@ static std::vector<std::vector<int>> LoadMatrix()
 
 		do
 		{
-			std::vector<int> lineData;
+			std::vector<double> lineData;
 			int value;
 			std::string textedValue;
 			for (int i = 0; i < line.length(); i++)
@@ -73,7 +73,7 @@ static std::vector<std::vector<int>> LoadMatrix()
 				if (lineData.size() != len)
 				{
 					std::cout << "Incorrect matrix, should be balanced" << std::endl;
-					return std::vector<std::vector<int>>();
+					return std::vector<std::vector<double>>();
 				}
 			}
 
@@ -84,23 +84,24 @@ static std::vector<std::vector<int>> LoadMatrix()
 		if (data.size() != len)
 		{
 			std::cout << "Incorrect matrix, should be squared" << std::endl;
-			return std::vector<std::vector<int>>();
+			return std::vector<std::vector<double>>();
 		}
 	}
 
 	return data;
 }
 
-static int CalcDeterminantNormal(std::vector<std::vector<int>> Matrix)
+static double CalcDeterminantNormal(std::vector<std::vector<double>> Matrix)
 {
 	//this function is written in c++ to calculate the determinant of matrix
 	// it's a recursive function that can handle matrix of any dimension
-	int det = 0; // the determinant value will be stored here
-	if (Matrix.size() == 1)
+	double det = 0; // the determinant value will be stored here
+	int n = Matrix.size();
+	if (n == 1)
 	{
 		return Matrix[0][0]; // no calculation needed
 	}
-	else if (Matrix.size() == 2)
+	else if (n == 2)
 	{
 		//in this case we calculate the determinant of a 2-dimensional matrix in a 
 		//default procedure
@@ -111,17 +112,17 @@ static int CalcDeterminantNormal(std::vector<std::vector<int>> Matrix)
 	{
 		//in this case we calculate the determinant of a squared matrix that have 
 		// for example 3x3 order greater than 2
-		for (int p = 0; p < Matrix[0].size(); p++)
+		for (int p = 0; p < n; p++)
 		{
 			//this loop iterate on each elements of the first row in the matrix.
 			//at each element we cancel the row and column it exist in
 			//and form a matrix from the rest of the elements in the matrix
-			std::vector<std::vector<int>> TempMatrix; // to hold the shaped matrix;
-			for (int i = 1; i < Matrix.size(); i++)
+			std::vector<std::vector<double>> TempMatrix; // to hold the shaped matrix;
+			for (int i = 1; i < n; i++)
 			{
 				// iteration will start from row one cancelling the first row values
-				std::vector<int> TempRow;
-				for (int j = 0; j < Matrix[i].size(); j++)
+				std::vector<double> TempRow;
+				for (int j = 0; j < n; j++)
 				{
 					// iteration will pass all cells of the i row excluding the j 
 					//value that match p column
@@ -131,7 +132,9 @@ static int CalcDeterminantNormal(std::vector<std::vector<int>> Matrix)
 					}
 				}
 				if (TempRow.size() > 0)
+				{
 					TempMatrix.push_back(TempRow);
+				}
 				//after adding each row of the new matrix to the vector tempx
 				//we add it to the vector temp which is the vector where the new 
 				//matrix will be formed
@@ -145,16 +148,17 @@ static int CalcDeterminantNormal(std::vector<std::vector<int>> Matrix)
 	}
 }
 
-static int CalcDeterminantOpenMP(std::vector<std::vector<int>> Matrix)
+static double CalcDeterminantOpenMP(std::vector<std::vector<double>> Matrix)
 {
 	//this function is written in c++ to calculate the determinant of matrix
 	// it's a recursive function that can handle matrix of any dimension
-	int det = 0; // the determinant value will be stored here
-	if (Matrix.size() == 1)
+	double det = 0; // the determinant value will be stored here
+	int n = Matrix.size();
+	if (n == 1)
 	{
 		return Matrix[0][0]; // no calculation needed
 	}
-	else if (Matrix.size() == 2)
+	else if (n == 2)
 	{
 		//in this case we calculate the determinant of a 2-dimensional matrix in a 
 		//default procedure
@@ -166,22 +170,24 @@ static int CalcDeterminantOpenMP(std::vector<std::vector<int>> Matrix)
 		//in this case we calculate the determinant of a squared matrix that have 
 		// for example 3x3 order greater than 2
 
-		auto chunk = Matrix.size();
+		//auto chunk = n;
+		int p = 0, i = 1, j = 0;
 
-#pragma omp parallel shared(chunk)
+#pragma omp parallel shared(Matrix,det) firstprivate(p) private(i,j)
 		{
-#pragma omp for schedule(dynamic,chunk) nowait
-			for (int p = 0; p < Matrix[0].size(); p++)
+			//printf("#%d thread \n", omp_get_thread_num());
+#pragma omp for schedule(guided,1) nowait
+			for (p = 0; p < n; p++)
 			{
 				//this loop iterate on each elements of the first row in the matrix.
 				//at each element we cancel the row and column it exist in
 				//and form a matrix from the rest of the elements in the matrix
-				std::vector<std::vector<int>> TempMatrix; // to hold the shaped matrix;
-				for (int i = 1; i < Matrix.size(); i++)
+				std::vector<std::vector<double>> TempMatrix; // to hold the shaped matrix;
+				for (i = 1; i < n; i++)
 				{
 					// iteration will start from row one cancelling the first row values
-					std::vector<int> TempRow;
-					for (int j = 0; j < Matrix[i].size(); j++)
+					std::vector<double> TempRow;
+					for (j = 0; j < n; j++)
 					{
 						// iteration will pass all cells of the i row excluding the j 
 						//value that match p column
@@ -191,12 +197,14 @@ static int CalcDeterminantOpenMP(std::vector<std::vector<int>> Matrix)
 						}
 					}
 					if (TempRow.size() > 0)
+					{
 						TempMatrix.push_back(TempRow);
+					}
 					//after adding each row of the new matrix to the vector tempx
 					//we add it to the vector temp which is the vector where the new 
 					//matrix will be formed
 				}
-				det = det + Matrix[0][p] * pow(-1, p) * CalcDeterminantOpenMP(TempMatrix);
+				det += Matrix[0][p] * pow(-1, p) * CalcDeterminantOpenMP(TempMatrix);
 				//then we calculate the value of determinant by using a recursive way
 				//where we re-call the function by passing to it the new formed matrix
 				//we keep doing this until we get our determinant
@@ -205,3 +213,6 @@ static int CalcDeterminantOpenMP(std::vector<std::vector<int>> Matrix)
 		return det;
 	}
 }
+
+
+
