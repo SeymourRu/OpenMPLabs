@@ -21,6 +21,19 @@ enum CellState
 	Player = 2,
 };
 
+struct SimplePlayer
+{
+	int id;
+	int coordX;
+	int coordY;
+	SimplePlayer(int id,int x, int y)
+	{
+this->id = id;
+this->coordX = x;
+this->coordY = y;
+	}
+};
+
 static CellState CheckCell(int value)
 {
 	return (CellState)value;
@@ -111,7 +124,7 @@ static std::vector<std::vector<int>> LoadPlayField()
 	return data;
 }
 
-static void SetPlayers(std::vector<std::vector<int>>& field)
+static vector<SimplePlayer> SetPlayers(std::vector<std::vector<int>>& field)
 {
 	auto iterationNum = 0;
 
@@ -121,6 +134,7 @@ static void SetPlayers(std::vector<std::vector<int>>& field)
 	srand(time(NULL));
 
 	auto maxValue = field.size();
+	vector<SimplePlayer> players;
 
 	std::cout << "========================" << std::endl;
 	std::cout << "Setting players:" << std::endl;
@@ -134,17 +148,20 @@ static void SetPlayers(std::vector<std::vector<int>>& field)
 		{
 			field[randX][randY] = Player;
 			std::cout << "Player "<< i << " - x:"<< randX << ",y:"<< randY<< std::endl;
+			players.push_back(SimplePlayer(i, randX,randY));
 		}
 		else
 		{
 			i--;
 		}
 	}
+	return players;
 }
 
 static void ShowField(std::vector<std::vector<int>> field)
 {
 	auto maxValue = field.size();
+	cout<<endl;
 	for (int i = 0;i < maxValue; i++)
 	{
 		cout <<"|";
@@ -156,14 +173,25 @@ static void ShowField(std::vector<std::vector<int>> field)
 	}
 }
 
+static void Play(std::vector<std::vector<int>> field)
+{
+
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	auto field = LoadPlayField();
 
 	if (field.size() != 0)
 	{
-		SetPlayers(field);
+		auto players = SetPlayers(field);
 		ShowField(field);
+
+		#pragma omp parallel shared(field)
+		{
+
+		}
+
 		//omp_set_nested(0);
 		//std::cout << "========================" << std::endl;
 		//std::cout << "========================" << std::endl;
