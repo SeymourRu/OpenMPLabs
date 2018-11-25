@@ -290,6 +290,12 @@ void PlayGame()
 		auto players = SetPlayers(field);
 		ShowField(field);
 
+		cout << endl <<"Legend:" << endl;
+		cout << "Exit - E" << endl;
+		cout << "Player - @" << endl;
+		cout << "Gold - $" << endl;
+		cout << "Free cell - ." << endl;
+
 		cout << endl << "When ready to play - hit any button" << endl;
 		system("pause");
 
