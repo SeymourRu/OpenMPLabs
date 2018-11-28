@@ -25,7 +25,7 @@ struct SimplePlayer
 	int coordX;
 	int coordY;
 	int goldCount;
-	bool finished = false;
+	bool finished;
 	std::chrono::high_resolution_clock::time_point finishTime;
 	//Direction previousDirection;
 
