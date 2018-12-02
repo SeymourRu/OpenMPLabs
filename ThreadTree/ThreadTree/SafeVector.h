@@ -253,8 +253,6 @@ safe_vector<V>::safe_vector(const typename safe_vector<V>& val_)
 	this->std::vector<V>::operator=(val_);
 
 	_mutex_stats.TryUnLock();
-
-	return *this;
 }
 
 template<typename V>
