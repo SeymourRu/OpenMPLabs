@@ -29,13 +29,13 @@ struct Node
 		//std::cout << "Node ~()" << std::endl;
 	}
 
-	void DrawTree(std::ofstream& output, int depth, bool markUnused, std::chrono::high_resolution_clock::time_point startTime)
+	void DrawTree(std::ofstream& output, int depth, bool markUnused, std::chrono::high_resolution_clock::time_point startTime, int& sum)
 	{
 		if (Nodes.size() > 0)
 		{
 			for (int i = 0; i < floor(Nodes.size() / 2.0); i++)
 			{
-				Nodes[i]->DrawTree(output, depth + 5, markUnused, startTime);
+				Nodes[i]->DrawTree(output, depth + 5, markUnused, startTime, sum);
 			}
 		}
 		else
@@ -48,14 +48,14 @@ struct Node
 		}
 
 		DrawRepeats(output, depth, '\t');
-		output << this->Value << "[" << this->Generation << "/" << this->Nodes.size() << "/" << this->ThreadId << "/" << this->Iteration << "]{" << std::chrono::duration_cast<std::chrono::milliseconds>(this->createTime - startTime).count() <<" ms}\n";
-
+		output << this->Value << "[" << this->Generation << "/" << this->Nodes.size() << "/" << this->ThreadId << "/" << this->Iteration << "]{" << std::chrono::duration_cast<std::chrono::milliseconds>(this->createTime - startTime).count() << " ms}\n";
+		sum += this->Value;
 
 		if (Nodes.size() > 0)
 		{
 			for (int i = floor(Nodes.size() / 2.0); i < Nodes.size(); i++)
 			{
-				Nodes[i]->DrawTree(output, depth + 5, markUnused, startTime);
+				Nodes[i]->DrawTree(output, depth + 5, markUnused, startTime, sum);
 			}
 		}
 		else

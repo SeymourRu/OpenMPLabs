@@ -122,6 +122,8 @@ shared_ptr<Node> GenerateMasterNode()
 	shared_ptr<Node> head(new Node(0, value, -1, -1));
 
 	auto threadNum = pick_a_number(1, 5);
+
+	omp_set_nested(1);
 	GenerateChildNodeOpenMP(head, threadNum);
 	return head;
 }
@@ -181,6 +183,7 @@ void Painting(std::wstring picPath)
 	while (!exiting)
 	{
 		pictureFunction(picPath.c_str(), 70, 5, 35, 20);
+		Sleep(100);
 	}
 
 	FreeLibraryAndExitThread(hinstLib, 0);
@@ -224,14 +227,16 @@ int _tmain(int argc, _TCHAR* argv[])
 		outfile << "Format: {Value Of Node}[Generation / Num of childs / Id of thread/ Iteration number]{Generated after x ms from start}" << endl;
 		outfile << "======================================================================================================================" << endl << endl;
 
-		tree->DrawTree(outfile, 0, true, generationStart);
+		auto sum = 0;
+
+		tree->DrawTree(outfile, 0, true, generationStart, sum);
 
 		outfile.close();
 
 		DrawAscii();
 		std::thread paintThread(Painting, picturePathStr);
 
-		cout << "Cool! Result saved!!~" << endl;
+		cout << "Cool! Sum of all values = " << sum <<". Result tree saved!!~" << endl;
 		system("pause");
 		exiting = true;
 		paintThread.join();
