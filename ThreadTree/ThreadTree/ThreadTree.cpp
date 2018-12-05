@@ -181,7 +181,7 @@ void Painting(std::wstring picPath)
 
 	while (!exiting)
 	{
-		pictureFunction(picPath.c_str(), 70, 5, 35, 20);
+		pictureFunction(picPath.c_str(), 50, 5, 35, 20);
 		Sleep(100);
 	}
 

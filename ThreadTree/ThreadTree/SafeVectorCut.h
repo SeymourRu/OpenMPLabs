@@ -14,7 +14,12 @@ public:
 	{}
 
 	// Default copy Constructor.
-	//SafeVector(const SafeVector&) = delete;
+	//SafeVector(const SafeVector& _val) = delete;
+	//SafeVector(const SafeVector& _val)
+	//{
+	//	this->std::vector<V>::operator=(_val);
+	//	//this->v
+	//}
 
 	// Copy Constructor (Overridden with MOVE)
 	SafeVector& operator=(SafeVector& other)
