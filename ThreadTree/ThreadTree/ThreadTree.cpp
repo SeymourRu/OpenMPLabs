@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "Defs.h"
-#include <memory>
 #include <random>
 #include <omp.h>
 #include <thread>
@@ -20,7 +19,7 @@ std::wstring picturePathStr;
 
 std::default_random_engine & global_urng()
 {
-	static std::default_random_engine u{};
+	static std::default_random_engine u;
 	return u;
 }
 
@@ -96,10 +95,10 @@ void GenerateChildNodeThread(shared_ptr<Node> parent, int childNum)
 				{
 					cout << ex.what() << endl;
 				}
-				catch (std::system_error ex)
+				/*catch (std::system_error ex)
 				{
 					cout << ex.what() << endl;
-				}
+				}*/
 				catch (...)
 				{
 					cout << "error(((" << endl;
@@ -144,17 +143,17 @@ void DrawAscii()
 	cout << "MSSSSSSSMSSSSMMMSSMMMPTMM;\"-/\\\":MMM ^ \"     MMMSSMMMSSMM" << endl;
 	cout << "SSSSSSSMMSSMMMMMMMMMP-.MMM :  ;.;P       dMMMMMMMMMP' " << endl;
 	cout << "SSMSSSMMMSMMMMMMMMMP   :M;`:  ;.'+\"\"\"t+dMMMMMMMMMMP   " << endl;
-	cout << "MMMSSMMMMMMMMPTMMMM\"\"\"\":P `.\// '    \"\"^^MMMMMMMP'    " << endl;
-	cout << "MMMMMMPTMMMMP=\"TMMMsg,      \/   db`c\"  dMMMMMP\"      " << endl;
+	cout << "MMMSSMMMMMMMMPTMMMM\"\"\"\":P `.\\// '    \"\"^^MMMMMMMP'    " << endl;
+	cout << "MMMMMMPTMMMMP=\"TMMMsg,      \\/   db`c\"  dMMMMMP\"      " << endl;
 	cout << "MMMMMM  TMMM   d$$$b ^          /T$; ;-/TMMMP         " << endl;
 	cout << "MMMMM; .^`M; d$P^T$$b          :  $$ ::  \"T(          " << endl;
 	cout << "MMMMMM   .-+d$$   $$$;         ; d$$ ;;  __           " << endl;
 	cout << "MMMMMMb   _d$$$   $$$$         :$$$; :MmMMMMp.        " << endl;
 	cout << "MMMMMM\"  \" T$$$._.$$$;          T$P.'MMMSSSSSSb.      " << endl;
 	cout << "MMM`TMb   -\")T$$$$$$P'       `._ \"\"  :MMSSSMMP'       " << endl;
-	cout << "MMM / \    '  \"T$$P\"           /     :MMMMMMM         " << endl;
+	cout << "MMM / \\    '  \"T$$P\"           /     :MMMMMMM         " << endl;
 	cout << "MMSb`. ;                      \"      :MMMMMMM         " << endl;
-	cout << "MMSSb_lSSSb.      \ `.   .___.       MMMMMMMM         " << endl;
+	cout << "MMSSb_lSSSb.      \\ `.   .___.       MMMMMMMM         " << endl;
 	cout << "MMMMSSSSSSSSb.                     .MMMMMMMMM         " << endl;
 	cout << "MMMMMMMMMMMSSSb                  .dMMMMMMMMM'         " << endl;
 	cout << "MMMMMMMMMMMMMSS;               .dMMMMMMMMMMP          " << endl;
